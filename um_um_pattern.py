@@ -6,20 +6,7 @@ from configparser import ConfigParser
 
 configs = ConfigParser()
 configs.read('config.ini')
-bbconf = configs['bbtips']
-HORAS = int(bbconf['horas'])
-RANGE = int(bbconf['range'])
-GAP = int(bbconf['gap'])
-MIN_AMOSTRAGEM = int(bbconf['min_amostragem'])
-MIN_ACERT = int(bbconf['min_acert'])
 
-print(f"""  
-            buscando dados de {HORAS} horas atras
-            olhando para {RANGE} tiros
-            considerando até {GAP} jogos apos o incio do padrão
-            minima amostragem {MIN_AMOSTRAGEM}
-            minima acertividade {MIN_ACERT}
-      """)
 
 def get_next_range(df, start_index, range, gap):
     nstart = start_index + 1 + gap
@@ -118,17 +105,11 @@ def main():
     try:
         pd.DataFrame().to_excel('patterns.xlsx')
         pd.DataFrame().to_excel('resultados.xlsx')
-        pd.DataFrame().to_excel('COPA_patterns.xlsx')
-        pd.DataFrame().to_excel('EURO_patterns.xlsx')
-        pd.DataFrame().to_excel('PREMIER_patterns.xlsx')
-        pd.DataFrame().to_excel('SUPER_patterns.xlsx')
-        
 
-    except PermissionError as ex:
-        print(ex)
-        raise Exception(f'Favor fechar o arquivo {ex.filename}')
+    except PermissionError:
+        raise Exception('Favor fechar o arquivo "patterns.xsls" e/ou "resultados.xlsx')
 
-    get_data.main(5, HORAS, False)
+    get_data.main(5, int(configs['bbtips']['horas']), False)
 
     df = pd.read_excel('data.xlsx')
 
@@ -138,12 +119,7 @@ def main():
     for camp in camps:
         dfs[camp] = df.loc[df.Campeonato == camp]
 
-    mercados = [
-        'ambas_marcam', 
-        'over_2_5',
-        'over_3_5',
-        'casa_vence'
-        ]
+    mercados = ['ambas_marcam', 'over_2_5', 'over_3_5', 'casa_vence']
 
 
     n_dfs = []
@@ -153,21 +129,21 @@ def main():
         ndf = dfs[df]
         ndf = ndf.sort_values('Resultado')
         for resultado in tqdm(ndf.Resultado.unique()):
-            for i in range(0, GAP):
+            for i in range(0, int(configs['bbtips']['gap'])):
                 patters_n = get_patterns(
-                    ndf, df, resultado, RANGE, i)
+                    ndf, df, resultado, int(configs['bbtips']['range']), i)
                 df3 = pd.DataFrame(patters_n)
                 n_dfs.extend(patters_n)
                 for mercado in mercados:
                     analise = analise_mercados(df3, mercado)
-                    if int(analise['% acerto']) >= MIN_ACERT and int(analise['amostragem']) > MIN_AMOSTRAGEM:
+                    if analise['% acerto'] >= 94.9 and analise['amostragem'] > 15:
                         data.append(analise)
 
     if len(data) > 0:
         pd.DataFrame(data).sort_values('amostragem', ascending=False).to_excel(
-            f'patterns.xlsx', index=False)
+            'patterns.xlsx', index=False)
     else:
-        print(f'Nenhum padrão encontrado')
+        print('Nenhum padrão encontrado')
 
 
     pd.DataFrame(n_dfs).to_excel('resultados.xlsx', index=False)
