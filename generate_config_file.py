@@ -28,6 +28,8 @@ def main():
         config_file.set("bbtips", "gap", '30')
         config_file.set("bbtips", "min_amostragem", '30')
         config_file.set("bbtips", "min_acert", '94')
+        config_file.set("bbtips", "mercados", '')
+        
 
 
         config_file.set("bbtips", "login_url", "https://api.bbtips.com.br/api/login/")

@@ -105,9 +105,15 @@ def main():
     try:
         pd.DataFrame().to_excel('patterns.xlsx')
         pd.DataFrame().to_excel('resultados.xlsx')
+        pd.DataFrame().to_excel('COPA_patterns.xlsx')
+        pd.DataFrame().to_excel('EURO_patterns.xlsx')
+        pd.DataFrame().to_excel('PREMIER_patterns.xlsx')
+        pd.DataFrame().to_excel('SUPER_patterns.xlsx')
+        
 
-    except PermissionError:
-        raise Exception('Favor fechar o arquivo "patterns.xsls" e/ou "resultados.xlsx')
+    except PermissionError as ex:
+        print(ex)
+        raise Exception(f'Favor fechar o arquivo {ex.filename}')
 
     get_data.main(5, int(configs['bbtips']['horas']), False)
 
@@ -120,15 +126,16 @@ def main():
         dfs[camp] = df.loc[df.Campeonato == camp]
 
     mercados = [
-        # 'ambas_marcam', 
-        # 'over_2_5',
+        'ambas_marcam', 
+        'over_2_5',
         'over_3_5',
-        # 'casa_vence']
+        'casa_vence'
+        ]
 
 
     n_dfs = []
-    data = []
     for df in dfs:
+        data = []
         print(f'Analisando {df}')
         ndf = dfs[df]
         ndf = ndf.sort_values('Resultado')
@@ -140,14 +147,14 @@ def main():
                 n_dfs.extend(patters_n)
                 for mercado in mercados:
                     analise = analise_mercados(df3, mercado)
-                    if analise['% acerto'] >= int(configs['bbtips']['min_acert']) and analise['amostragem'] > int(configs['bbtips']['min_amostragem']):
+                    if int(analise['% acerto']) >= int(configs['bbtips']['min_acert']) and int(analise['amostragem']) > int(configs['bbtips']['min_amostragem']):
                         data.append(analise)
 
-    if len(data) > 0:
-        pd.DataFrame(data).sort_values('amostragem', ascending=False).to_excel(
-            'patterns.xlsx', index=False)
-    else:
-        print('Nenhum padrão encontrado')
+        if len(data) > 0:
+            pd.DataFrame(data).sort_values('amostragem', ascending=False).to_excel(
+                f'{df}_patterns.xlsx', index=False)
+        else:
+            print(f'Nenhum padrão encontrado {df}')
 
 
     pd.DataFrame(n_dfs).to_excel('resultados.xlsx', index=False)

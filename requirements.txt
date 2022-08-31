@@ -4,3 +4,4 @@ pydantic
 requests
 openpyxl
 pyarrow
+xlrd==1.2.0
