@@ -6,7 +6,20 @@ from configparser import ConfigParser
 
 configs = ConfigParser()
 configs.read('config.ini')
+bbconf = configs['bbtips']
+HORAS = int(bbconf['horas'])
+RANGE = int(bbconf['range'])
+GAP = int(bbconf['gap'])
+MIN_AMOSTRAGEM = int(bbconf['min_amostragem'])
+MIN_ACERT = int(bbconf['min_acert'])
 
+print(f"""  
+            buscando dados de {HORAS} horas atras
+            olhando para {RANGE} tiros
+            considerando até {GAP} apos o incio do padrão
+            minima amostragem {MIN_AMOSTRAGEM}
+            minima acertividade {MIN_ACERT}
+      """)
 
 def get_next_range(df, start_index, range, gap):
     nstart = start_index + 1 + gap
@@ -115,7 +128,7 @@ def main():
         print(ex)
         raise Exception(f'Favor fechar o arquivo {ex.filename}')
 
-    get_data.main(5, int(configs['bbtips']['horas']), False)
+    get_data.main(5, HORAS, False)
 
     df = pd.read_excel('data.xlsx')
 
@@ -140,14 +153,14 @@ def main():
         ndf = dfs[df]
         ndf = ndf.sort_values('Resultado')
         for resultado in tqdm(ndf.Resultado.unique()):
-            for i in range(0, int(configs['bbtips']['gap'])):
+            for i in range(0, GAP):
                 patters_n = get_patterns(
-                    ndf, df, resultado, int(configs['bbtips']['range']), i)
+                    ndf, df, resultado, RANGE, i)
                 df3 = pd.DataFrame(patters_n)
                 n_dfs.extend(patters_n)
                 for mercado in mercados:
                     analise = analise_mercados(df3, mercado)
-                    if int(analise['% acerto']) >= int(configs['bbtips']['min_acert']) and int(analise['amostragem']) > int(configs['bbtips']['min_amostragem']):
+                    if int(analise['% acerto']) >= MIN_ACERT and int(analise['amostragem']) > MIN_AMOSTRAGEM:
                         data.append(analise)
 
         if len(data) > 0:
