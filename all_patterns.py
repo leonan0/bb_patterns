@@ -119,7 +119,11 @@ def main():
     for camp in camps:
         dfs[camp] = df.loc[df.Campeonato == camp]
 
-    mercados = ['ambas_marcam', 'over_2_5', 'over_3_5', 'casa_vence']
+    mercados = [
+        # 'ambas_marcam', 
+        # 'over_2_5',
+        'over_3_5',
+        # 'casa_vence']
 
 
     n_dfs = []
@@ -136,7 +140,7 @@ def main():
                 n_dfs.extend(patters_n)
                 for mercado in mercados:
                     analise = analise_mercados(df3, mercado)
-                    if analise['% acerto'] >= 94.9 and analise['amostragem'] > 15:
+                    if analise['% acerto'] >= int(configs['bbtips']['min_acert']) and analise['amostragem'] > int(configs['bbtips']['min_amostragem']):
                         data.append(analise)
 
     if len(data) > 0:
