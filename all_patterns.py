@@ -16,7 +16,7 @@ MIN_ACERT = int(bbconf['min_acert'])
 print(f"""  
             buscando dados de {HORAS} horas atras
             olhando para {RANGE} tiros
-            considerando até {GAP} apos o incio do padrão
+            considerando até {GAP} jogos apos o incio do padrão
             minima amostragem {MIN_AMOSTRAGEM}
             minima acertividade {MIN_ACERT}
       """)
