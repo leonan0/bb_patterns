@@ -118,11 +118,6 @@ def main():
     try:
         pd.DataFrame().to_excel('patterns.xlsx')
         pd.DataFrame().to_excel('resultados.xlsx')
-        pd.DataFrame().to_excel('COPA_patterns.xlsx')
-        pd.DataFrame().to_excel('EURO_patterns.xlsx')
-        pd.DataFrame().to_excel('PREMIER_patterns.xlsx')
-        pd.DataFrame().to_excel('SUPER_patterns.xlsx')
-        
 
     except PermissionError as ex:
         print(ex)
