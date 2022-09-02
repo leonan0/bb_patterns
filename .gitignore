@@ -2,3 +2,4 @@
 *.xlsx
 .env
 *_pycache_*
+*.ipynb
