@@ -38,7 +38,7 @@ def get_patterns(df, campeonato, resultado, range, gap):
             'casa': row.TimeA,
             'visitante': row.TimeB,
             'resultado': row.Resultado,
-            'jogos_apos': gap + 1,
+            'jogos_apos': gap,
             'range': range,
             'tiros': [],
             'casa_vence': [],
