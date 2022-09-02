@@ -1,16 +1,18 @@
 import get_data
 import pandas as pd
 
+try:
+    pd.DataFrame().to_excel('minutagens.xlsx')
+except PermissionError as e:
+    raise Exception(f'Favor fechar o arquivo {e.filename}')
+
+
 get_data.main(horas=24)
 
 df_all = pd.read_excel('./data.xlsx')
 camps = df_all.Campeonato.unique()
 dfs = []
 
-try:
-    pd.DataFrame().to_excel('minutagens.xlsx')
-except PermissionError as e:
-    raise Exception(f'Favor fechar o arquivo {e.filename}')
 
 for camp in camps:
     df = df_all.loc[df_all.Campeonato == camp].copy()
