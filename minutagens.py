@@ -57,7 +57,7 @@ def get_best_minutes(item_r, mercado, acertividade):
             result.append({
                 'campeonato': item_r['campeonato'],
                 'mercado': mercado,
-                'minutagem': seq,
+                'minutagem': item['seq'],
                 '%': round(t/len(item[mercado])*100, 2),
                 'greens': t,
                 'reds': f,
@@ -73,5 +73,5 @@ for camp in dfs:
         resultado.extend(get_best_minutes(camp, m, 50))
 
 
-pd.DataFrame(resultado).sort_values(
-    'campeonato').to_excel('minutagens.xlsx', index=False)
+df = pd.DataFrame(resultado).sort_values('%', ascending=False)
+df.to_excel('minutagens.xlsx', index=False)
