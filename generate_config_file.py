@@ -1,6 +1,5 @@
 import configparser
 import bb_token
-# CREATE OBJECT
 
 config_file = configparser.ConfigParser()
 
@@ -15,12 +14,10 @@ def write_config(config_file, config_file_path='./config.ini'):
 def main():
     try:
         config_file.read('./config.ini')
-        if config_file['bbtips']['username'] != '':
+        if config_file['bbtips']['username'] != '' or config_file['bbtips']['username']:
             write_config(config_file)
     except:
-        # ADD SECTION
         config_file.add_section("bbtips")
-        # ADD SETTINGS TO SECTION
         config_file.set("bbtips", "username", input('digite seu username:\n'))
         config_file.set("bbtips", "password", input('digite sua senha:\n'))
         config_file.set("bbtips", "horas", '48')
@@ -28,7 +25,9 @@ def main():
         config_file.set("bbtips", "gap", '30')
         config_file.set("bbtips", "min_amostragem", '30')
         config_file.set("bbtips", "min_acert", '94')
-        config_file.set("bbtips", "mercados", '')
+        config_file.set("bbtips", "mercados", 'ambas_marcam, over_2_5, over_3_5, casa_vence')
+        config_file.set("bbtips", "file_paths", '.')
+
         
 
 

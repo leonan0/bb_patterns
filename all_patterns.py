@@ -12,6 +12,7 @@ RANGE = int(bbconf['range'])
 GAP = int(bbconf['gap'])
 MIN_AMOSTRAGEM = int(bbconf['min_amostragem'])
 MIN_ACERT = int(bbconf['min_acert'])
+PATH_TO_SAVE = bbconf['file_paths']
 
 print(f"""  
             buscando dados de {HORAS} horas atras
@@ -19,6 +20,7 @@ print(f"""
             considerando até {GAP} jogos apos o incio do padrão
             minima amostragem {MIN_AMOSTRAGEM}
             minima acertividade {MIN_ACERT}
+            Arquivos serão salvos em {PATH_TO_SAVE}
       """)
 
 def get_next_range(df, start_index, range, gap):
@@ -43,6 +45,7 @@ def get_patterns(df, campeonato, resultado, range, gap):
             'tiros': [],
             'casa_vence': [],
             'ambas_marcam': [],
+            'under_0_5': [],
             'over_2_5': [],
             'over_3_5': [],
             'ambas_marcam_odds': [],
@@ -57,6 +60,7 @@ def get_patterns(df, campeonato, resultado, range, gap):
             r['ambas_marcam'].append(nrow.ambas_marcam)
             r['casa_vence'].append(nrow.casa_vence)
 
+            r['under_0_5'].append(nrow.under_0_5)
             r['over_2_5'].append(nrow.over_2_5)
             r['over_3_5'].append(nrow.over_3_5)
             r['ambas_marcam_odds'].append(nrow.ambas_marcam_odd)
@@ -137,7 +141,8 @@ def main():
         'ambas_marcam', 
         'over_2_5',
         'over_3_5',
-        'casa_vence'
+        'casa_vence',
+        'under_0_5'
         ]
 
 

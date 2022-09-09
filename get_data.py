@@ -3,17 +3,10 @@ from enum import Enum
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime, timedelta
-import configparser
 import requests
+import configs
+import teams_mapper
 
-config = configparser.ConfigParser()
-configs = config.read('./config.ini')
-try:
-    bbtips = config['bbtips']
-except KeyError:
-    import generate_config_file
-    generate_config_file.main()
-    raise Exception('Favor executar novamente')
 
 class Campeonatos(Enum):
     EURO = 1
@@ -41,6 +34,7 @@ class Jogo(BaseModel):
     Resultado_HT_Odd: Optional[str] = None
     Id: Optional[int]
     timedelta: float = 0
+    timestamp: Optional[int]
     Data: Optional[datetime] = None
     casa_vence: Optional[bool] = False
     visitante_vence: Optional[bool] = False
@@ -51,7 +45,8 @@ class Jogo(BaseModel):
     over_1_5: Optional[bool] = False
     over_2_5: Optional[bool] = False
     over_3_5: Optional[bool] = False
-
+    under_0_5: Optional[bool] = False
+    total_gols: Optional[int] = 0
     ambas_marcam_odd: Optional[float] = None
     over_1_5_odd: Optional[float] = None
     over_2_5_odd: Optional[float] = None
@@ -77,6 +72,9 @@ class Jogo(BaseModel):
                 data['Odds'] = [12*0]
 
             data['Hora'] = int(data['Hora'])
+            data['TimeA'] = teams_mapper.times[data['TimeA'].strip()]
+            data['TimeB'] = teams_mapper.times[data['TimeB'].strip()]
+
             return data
         except Exception as ex:
             print(ex)
@@ -86,11 +84,13 @@ class Jogo(BaseModel):
         self.Data = datetime.today().replace(
             hour=self.Hora, minute=self.Minuto, second=0, microsecond=0) - timedelta(days=self.timedelta)
         self.dia = self.Data.day
+        self.timestamp = int(self.Data.timestamp())
 
     def set_results(self):
         if self.Resultado != None:
             self.casa = int(self.Resultado.split('-')[0][0])
             self.visitante = int(self.Resultado.split('-')[1][0])
+            self.total_gols = self.casa + self.visitante
             if self.casa > self.visitante:
                 self.casa_vence = True
             elif self.visitante > self.casa:
@@ -116,25 +116,25 @@ class Jogo(BaseModel):
         self.over_3_5_odd = float(self.Odds[3])
 
     def validate_over(self):
-        if self.casa and self.visitante:
-            total = self.casa + self.visitante
+        if self.total_gols:
+            total = self.total_gols
             if total > 3.5:
                 self.over_3_5 = True
             if total > 2.5:
                 self.over_2_5 = True
             if total > 1.5:
                 self.over_1_5 = True
+            if total < 0.5:
+                self.under_0_5 = True
         else:
             pass
 
 def get_futebol_data(liga=5, futuro=False, horas=3, tipo_odd=''):
     headers = {
-        'authorization': bbtips['auth_token'],
+        'authorization': configs.bbconf['auth_token'],
         'content-type': 'application/json',
     }
-    print(f'getting data from {Campeonatos(liga).name}')
-    print(f'qtd hrs {horas}')
-    url = f"{bbtips['futebol_virtual_url']}?liga={liga}&futuro={futuro}&Horas=Horas{horas}&tipoOdd={tipo_odd}"
+    url = f"{configs.bbconf['futebol_virtual_url']}?liga={liga}&futuro={futuro}&Horas=Horas{horas}&tipoOdd={tipo_odd}"
 
     response = requests.request("GET", url, headers=headers)
     return response
@@ -156,10 +156,9 @@ def main(liga=5, horas=48, futuro=True):
                     
     print(f'salvos {len(jogos)} jogos')
 
-    pd.DataFrame(jogos).to_excel('data.xlsx', index=False)
-    # pd.DataFrame(jogos).to_parquet('data.parquet', index=False)
+    pd.DataFrame(jogos).to_excel(f"{configs.PATH_TO_SAVE}/data_{datetime.today().strftime('%Y%m%d')}_{horas}.xlsx", index=False)
+    pd.DataFrame(jogos).to_excel("data.xlsx", index=False)
 
-    print('Save')
 
 
 if __name__ == '__main__':
