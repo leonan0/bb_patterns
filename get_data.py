@@ -158,7 +158,7 @@ def main(liga=5, horas=48, futuro=True):
 
     pd.DataFrame(jogos).to_excel(f"{configs.PATH_TO_SAVE}/data_{datetime.today().strftime('%Y%m%d')}_{horas}.xlsx", index=False)
     pd.DataFrame(jogos).to_excel("data.xlsx", index=False)
-
+    pd.DataFrame(jogos).sort_values(['Campeonato', 'timestamp']).reset_index(drop=True).reset_index().to_parquet('data.parquet')
 
 
 if __name__ == '__main__':

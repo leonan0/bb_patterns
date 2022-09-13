@@ -1,7 +1,7 @@
 from tqdm import tqdm
 import pandas as pd
 import get_data
-
+from utils import get_next_range
 from configparser import ConfigParser
 
 configs = ConfigParser()
@@ -22,10 +22,6 @@ print(f"""
             minima acertividade {MIN_ACERT}
             Arquivos serão salvos em {PATH_TO_SAVE}
       """)
-
-def get_next_range(df, start_index, range, gap):
-    nstart = start_index + 1 + gap
-    return df.loc[nstart:nstart+range - 1]
 
 
 def get_patterns(df, campeonato, resultado, range, gap):

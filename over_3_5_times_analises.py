@@ -26,10 +26,12 @@ for camp in times:
         jogos_time_visitante = df_camp.query(f"'{time}' == TimeB")
         over_3_5 = jogos_time_casa.query(over_3_5_query)['total_gols'].count(
         ) + jogos_time_visitante.query(over_3_5_query)['total_gols'].count()
-        mais_5_gols = jogos_time_casa.query('casa > 4')['casa'].count(
-        ) + jogos_time_visitante.query('visitante > 4')['casa'].count()
+        
+        mais_5_gols = jogos_time_casa.query('casa + visitante >= 5 ')['casa'].count()
+        
         quantidade_de_jogos = jogos_time_casa['total_gols'].count(
         ) + jogos_time_visitante['total_gols'].count()
+        
         dados.append({'Campeonato': camp,
                       'Time': time,
                       'Quantidade de Jogos': quantidade_de_jogos,
@@ -40,7 +42,7 @@ for camp in times:
                       })
 df_melhores_times = pd.DataFrame(dados)
 df_melhores_times.sort_values(
-    ['Campeonato', '% Over 3.5', 'Quantidade Over 3.5'], ascending=False, inplace=True)
+    ['Campeonato', 'Quantidade Over 3.5','% Over 3.5' ], ascending=False, inplace=True)
 
 
 try:

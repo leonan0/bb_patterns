@@ -3,6 +3,8 @@ import pandas as pd
 import get_data
 from tqdm import tqdm
 from configparser import ConfigParser
+import get_data
+
 
 configs = ConfigParser()
 configs.read('config.ini')
@@ -60,11 +62,11 @@ def main():
     for camp in tqdm(campeonatos):
         results = []
         for index, row in camp.iterrows():
-            if row.casa >= 0 and row.visitante < row.casa:
+            if row.casa > row.visitante:
                 try:
-                    if camp_euro.iloc[index+1].visitante == 2:  
+                    if camp.iloc[index+1].visitante == 2:  
                         results.append(set_results(row, index, 1, camp))
-                    elif camp_euro.iloc[index+2].visitante == 2:  
+                    elif camp.iloc[index+2].visitante == 2:
                         results.append(set_results(row, index, 2, camp))
                 except Exception as ex:
                     print(ex)
@@ -89,3 +91,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+'''
+casa vence
+proximos 2 visitante marca 2
+'''

@@ -83,5 +83,13 @@ times = {
     'Roma': 'Roma',
     'Milán': 'Milan',
     'Uruguay': 'Uruguai',
-    'Turín': 'Turin'
+    'Turín': 'Turin',
+    'Suecia': 'Suecia',
+    'Austria': 'Austria',
+    'Italia': 'Italia',
+    'Gales': 'Pais de Gales',
+    'Hungría': 'Hungria',
+    'West ham': 'West Ham',
+    'Wolverhampto': 'Wolverhampton',
+    'Dormund': 'Dortmund',
 }
