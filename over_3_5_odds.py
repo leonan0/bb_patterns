@@ -2,7 +2,7 @@ import get_data
 import pandas as pd
 from tqdm import tqdm
 from utils import get_next_range
-get_data.main(5, 48, False)
+get_data.main(5, 24, False)
 df = pd.read_excel('./data.xlsx')
 
 odds_guia = df.over_2_5_odd.unique()
