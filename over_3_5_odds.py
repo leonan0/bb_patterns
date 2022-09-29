@@ -15,7 +15,7 @@ def analise_camp(df, camp):
     print(f'start {camp}')
     for index, row in df_camp.iterrows():
         if row.over_2_5_odd in odds_guia:
-            cont = 0
+            cont = -3
             over_3_5 = False
             while not over_3_5:
                 try:
